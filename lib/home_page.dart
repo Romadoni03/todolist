@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:todo_list/add_todo_page.dart';
+import 'package:todo_list/detail_todo_page.dart';
 import 'package:todo_list/model/todolist_model.dart';
 
 class HomePage extends StatefulWidget {
@@ -68,6 +69,19 @@ class _HomePageState extends State<HomePage> {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
             child: ListTile(
+              onTap: () async {
+                int temp = index;
+                Todo updateItem = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DetailTodoPage(
+                              currentTodo: _list[index],
+                            )));
+                log("halaman home${updateItem.title}");
+                setState(() {
+                  _list[temp] = updateItem;
+                });
+              },
               onLongPress: () {
                 log("Deleting this todo");
                 removeTodoAlert(context, index);

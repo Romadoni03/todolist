@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:todo_list/model/todolist_model.dart';
 
 class AddTodoPage extends StatefulWidget {
@@ -66,21 +69,15 @@ class _AddTodoPageState extends State<AddTodoPage> {
             ),
             TextField(
               controller: _date,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Date",
                 hintText: "Date",
-              ),
-            ),
-            SizedBox(
-              height: 150,
-              child: CupertinoDatePicker(
-                mode: CupertinoDatePickerMode.date,
-                initialDateTime: DateTime(2024, 5, 20),
-                onDateTimeChanged: (DateTime newDateTime) {
-                  setState(() {
-                    
-                  });
-                },
+                prefixIcon: InkWell(
+                  onTap: () {
+                    _selectTodoDate(context);
+                  },
+                  child: Icon(Icons.calendar_today),
+                ),
               ),
             ),
             const SizedBox(
@@ -104,5 +101,22 @@ class _AddTodoPageState extends State<AddTodoPage> {
         ),
       ),
     );
+  }
+
+  _selectTodoDate(BuildContext context) async {
+    DateTime dateTime = DateTime.now();
+    var pickedDate = await showDatePicker(
+      context: context,
+      initialDate: dateTime,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2030),
+    );
+    if (pickedDate != null) {
+      setState(() {
+        dateTime = pickedDate;
+        _date.text = DateFormat("yyyy-MM-dd").format(pickedDate);
+      });
+      log(_date.text);
+    }
   }
 }
