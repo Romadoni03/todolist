@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list/model/todolist_model.dart';
+import 'package:todo_list/repository/repository.dart';
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -18,7 +19,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
   final _category = TextEditingController();
   final _date = TextEditingController();
 
-  _addTodoList() {
+  _addTodoList() async {
     Todo newTodo = Todo(
       title: _title.text,
       description: _description.text,
@@ -27,7 +28,17 @@ class _AddTodoPageState extends State<AddTodoPage> {
       isFinished: 0,
     );
 
-    Navigator.pop(context, newTodo);
+    log("proses");
+
+    Repository repo = Repository();
+    var result = await repo.insertData('todos', Todo.todoMap(newTodo));
+
+    if (result > 0) {
+      Navigator.pop(context, newTodo);
+      log("sukses");
+    } else {
+      log("Data is not created. Result value : " + result);
+    }
   }
 
   @override

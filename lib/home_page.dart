@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:todo_list/add_todo_page.dart';
 import 'package:todo_list/detail_todo_page.dart';
 import 'package:todo_list/model/todolist_model.dart';
+import 'package:todo_list/repository/repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,34 +21,48 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    generatedTodo();
+    // generatedTodo();
+    getTodo();
   }
 
-  void generatedTodo() {
-    _list = [
-      Todo(
-          id: 1,
-          title: "Kuliah",
-          description: "Mencari Relasi",
-          category: "Kuliah di Poliwangi",
-          date: "12-12-2012",
-          isFinished: 0),
-      Todo(
-          id: 2,
-          title: "Kerja",
-          description: "Mencari Uang",
-          category: "Kerja di Blibli.com",
-          date: "12-12-20202",
-          isFinished: 0),
-      Todo(
-          id: 3,
-          title: "Liburan",
-          description: "Mencari Pahala",
-          category: "liburan di Makkah & Madinah",
-          date: "12-12-2030",
-          isFinished: 0),
-    ];
+  late Repository repo;
+  getTodo() async {
+    _list = [];
+    repo = Repository();
+    List<dynamic> resultTodo = await repo.readData('todos');
+    for (var todo in resultTodo) {
+      _list.add(Todo.mapTodo(todo));
+    }
+    setState(() {
+      _list;
+    });
   }
+
+  // void generatedTodo() {
+  //   _list = [
+  //     Todo(
+  //         id: 1,
+  //         title: "Kuliah",
+  //         description: "Mencari Relasi",
+  //         category: "Kuliah di Poliwangi",
+  //         date: "12-12-2012",
+  //         isFinished: 0),
+  //     Todo(
+  //         id: 2,
+  //         title: "Kerja",
+  //         description: "Mencari Uang",
+  //         category: "Kerja di Blibli.com",
+  //         date: "12-12-20202",
+  //         isFinished: 0),
+  //     Todo(
+  //         id: 3,
+  //         title: "Liburan",
+  //         description: "Mencari Pahala",
+  //         category: "liburan di Makkah & Madinah",
+  //         date: "12-12-2030",
+  //         isFinished: 0),
+  //   ];
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,51 +75,55 @@ class _HomePageState extends State<HomePage> {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: _list.length,
-        itemBuilder: (context, index) {
-          return Card(
-            color: Colors.white,
-            elevation: 8.0,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-            child: ListTile(
-              onTap: () async {
-                int temp = index;
-                Todo updateItem = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => DetailTodoPage(
-                              currentTodo: _list[index],
-                            )));
-                log("halaman home${updateItem.title}");
-                setState(() {
-                  _list[temp] = updateItem;
-                });
+      body: (_list.isEmpty)
+          ? const Center(
+              child: Text("Todo List Kosong"),
+            )
+          : ListView.builder(
+              itemCount: _list.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  color: Colors.white,
+                  elevation: 8.0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(0)),
+                  child: ListTile(
+                    onTap: () async {
+                      int temp = index;
+                      Todo updateItem = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailTodoPage(
+                                    currentTodo: _list[index],
+                                  )));
+                      log("halaman home${updateItem.title}");
+                      setState(() {
+                        _list[temp] = updateItem;
+                      });
+                    },
+                    onLongPress: () {
+                      log("Deleting this todo");
+                      removeTodoAlert(context, index);
+                    },
+                    title: Text(
+                      _list[index].title ?? "No Title",
+                      style: const TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      _list[index].description ?? "No Descriptioin",
+                      style: const TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                    trailing: Text(
+                      _list[index].date ?? "No Date",
+                      style: const TextStyle(
+                          color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                );
               },
-              onLongPress: () {
-                log("Deleting this todo");
-                removeTodoAlert(context, index);
-              },
-              title: Text(
-                _list[index].title ?? "No Title",
-                style: const TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text(
-                _list[index].description ?? "No Descriptioin",
-                style: const TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
-              trailing: Text(
-                _list[index].date ?? "No Date",
-                style: const TextStyle(
-                    color: Colors.blue, fontWeight: FontWeight.bold),
-              ),
             ),
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () async {
@@ -138,9 +157,11 @@ class _HomePageState extends State<HomePage> {
     Widget continueButton = TextButton(
       child: const Text("Hapus"),
       onPressed: () {
-        setState(() {
-          _list.removeAt(index);
-        });
+        // setState(() {
+        //   _list.removeAt(index);
+        // });
+        var result = repo.deleteData('todos', _list[index].id);
+        getTodo();
         Navigator.of(context).pop();
       },
     );
