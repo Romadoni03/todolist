@@ -9,11 +9,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseConnection {
   setDatabase() async {
     var directory = await getApplicationDocumentsDirectory();
-<<<<<<< HEAD
     var path = join(directory.path, 'db_todolist_v5');
-=======
-    var path = join(directory.path, 'db_todolist_v4');
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
     var database =
         await openDatabase(path, version: 1, onCreate: _onCreatingDatabase);
 

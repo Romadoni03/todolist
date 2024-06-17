@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import 'dart:developer';
-
-=======
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
 import 'package:flutter/material.dart';
 import 'package:todo_list/model/categories_model.dart';
-import 'package:todo_list/model/todolist_model.dart';
 import 'package:todo_list/repository/repository.dart';
 
 class SamplePage extends StatefulWidget {
@@ -16,7 +11,6 @@ class SamplePage extends StatefulWidget {
 }
 
 class _SamplePageState extends State<SamplePage> {
-<<<<<<< HEAD
   final _name = TextEditingController();
   List<Category> _categories = [];
 
@@ -37,16 +31,11 @@ class _SamplePageState extends State<SamplePage> {
     }
   }
 
-=======
-  List<Category> _categories = [];
-
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // generatedTodo();
-<<<<<<< HEAD
     getCategoires();
   }
 
@@ -57,18 +46,6 @@ class _SamplePageState extends State<SamplePage> {
     List<dynamic> resultCategories = await repo.readData('categories');
     for (var category in resultCategories) {
       _categories.add(Category.mapTodo(category));
-=======
-    getTodo();
-  }
-
-  late Repository repo;
-  getTodo() async {
-    _categories = [];
-    repo = Repository();
-    List<dynamic> resultTodo = await repo.readData('categories');
-    for (var todo in resultTodo) {
-      _categories.add(Todo.mapTodo(todo));
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
     }
     setState(() {
       _categories;
@@ -88,11 +65,7 @@ class _SamplePageState extends State<SamplePage> {
       ),
       body: (_categories.isEmpty)
           ? const Center(
-<<<<<<< HEAD
               child: Text("Nothing Categories"),
-=======
-              child: Text("Category Kosong"),
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
             )
           : ListView.builder(
               itemCount: _categories.length,
@@ -100,7 +73,6 @@ class _SamplePageState extends State<SamplePage> {
                 return funcCard(index);
               },
             ),
-<<<<<<< HEAD
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blue,
         onPressed: () {
@@ -113,8 +85,6 @@ class _SamplePageState extends State<SamplePage> {
           color: Colors.white,
         ),
       ),
-=======
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
       drawer: funcDrawer(context),
     );
   }
@@ -132,7 +102,6 @@ class _SamplePageState extends State<SamplePage> {
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
-<<<<<<< HEAD
         trailing: IconButton(
           onPressed: () {
             removeCategoryAlert(context, index);
@@ -143,8 +112,6 @@ class _SamplePageState extends State<SamplePage> {
             color: Colors.red,
           ),
         ),
-=======
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
       ),
     );
   }
@@ -199,7 +166,6 @@ class _SamplePageState extends State<SamplePage> {
   backHomePage(BuildContext context) {
     Navigator.pop(context);
   }
-<<<<<<< HEAD
 
   funcShowDialog(BuildContext context) {
     showDialog(
@@ -268,6 +234,4 @@ class _SamplePageState extends State<SamplePage> {
       },
     );
   }
-=======
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
 }

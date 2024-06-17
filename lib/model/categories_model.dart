@@ -3,7 +3,6 @@ class Category {
   String? category;
 
   Category({this.id, this.category});
-<<<<<<< HEAD
 
   static mapTodo(map) {
     Category newCategory = Category();
@@ -20,6 +19,4 @@ class Category {
 
     return mapping;
   }
-=======
->>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
 }
