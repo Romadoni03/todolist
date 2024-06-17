@@ -18,15 +18,16 @@ class Todo {
     Todo newTodo = Todo();
     newTodo.id = map['id'];
     newTodo.title = map['title'];
-    newTodo.description = map['description'];
+    newTodo.description = map['desciption'];
     newTodo.category = map['category'];
-    newTodo.date = map['date'];
+    newTodo.date = map['todo_date'];
     newTodo.isFinished = map['is_finished'];
     return newTodo;
   }
 
   static todoMap(item) {
     var mapping = <String, dynamic>{};
+    mapping['id'] = item.id;
     mapping['title'] = item.title;
     mapping['desciption'] = item.description;
     mapping['category'] = item.category;

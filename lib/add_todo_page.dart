@@ -27,16 +27,17 @@ class _AddTodoPageState extends State<AddTodoPage> {
       date: _date.text,
       isFinished: 0,
     );
-
-    log("proses");
+    log("before from add page");
 
     Repository repo = Repository();
-    var result = await repo.insertData('todos', Todo.todoMap(newTodo));
+    var result = await repo.insertData('todo', Todo.todoMap(newTodo));
 
     if (result > 0) {
+      // ignore: use_build_context_synchronously
       Navigator.pop(context, newTodo);
       log("sukses");
     } else {
+      // ignore: prefer_interpolation_to_compose_strings
       log("Data is not created. Result value : " + result);
     }
   }

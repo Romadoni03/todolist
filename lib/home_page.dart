@@ -5,6 +5,7 @@ import 'package:todo_list/add_todo_page.dart';
 import 'package:todo_list/detail_todo_page.dart';
 import 'package:todo_list/model/todolist_model.dart';
 import 'package:todo_list/repository/repository.dart';
+import 'package:todo_list/sample_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   getTodo() async {
     _list = [];
     repo = Repository();
-    List<dynamic> resultTodo = await repo.readData('todos');
+    List<dynamic> resultTodo = await repo.readData('todo');
     for (var todo in resultTodo) {
       _list.add(Todo.mapTodo(todo));
     }
@@ -37,32 +38,6 @@ class _HomePageState extends State<HomePage> {
       _list;
     });
   }
-
-  // void generatedTodo() {
-  //   _list = [
-  //     Todo(
-  //         id: 1,
-  //         title: "Kuliah",
-  //         description: "Mencari Relasi",
-  //         category: "Kuliah di Poliwangi",
-  //         date: "12-12-2012",
-  //         isFinished: 0),
-  //     Todo(
-  //         id: 2,
-  //         title: "Kerja",
-  //         description: "Mencari Uang",
-  //         category: "Kerja di Blibli.com",
-  //         date: "12-12-20202",
-  //         isFinished: 0),
-  //     Todo(
-  //         id: 3,
-  //         title: "Liburan",
-  //         description: "Mencari Pahala",
-  //         category: "liburan di Makkah & Madinah",
-  //         date: "12-12-2030",
-  //         isFinished: 0),
-  //   ];
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -82,66 +57,124 @@ class _HomePageState extends State<HomePage> {
           : ListView.builder(
               itemCount: _list.length,
               itemBuilder: (context, index) {
-                return Card(
-                  color: Colors.white,
-                  elevation: 8.0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0)),
-                  child: ListTile(
-                    onTap: () async {
-                      int temp = index;
-                      Todo updateItem = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => DetailTodoPage(
-                                    currentTodo: _list[index],
-                                  )));
-                      log("halaman home${updateItem.title}");
-                      setState(() {
-                        _list[temp] = updateItem;
-                      });
-                    },
-                    onLongPress: () {
-                      log("Deleting this todo");
-                      removeTodoAlert(context, index);
-                    },
-                    title: Text(
-                      _list[index].title ?? "No Title",
-                      style: const TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Text(
-                      _list[index].description ?? "No Descriptioin",
-                      style: const TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
-                    ),
-                    trailing: Text(
-                      _list[index].date ?? "No Date",
-                      style: const TextStyle(
-                          color: Colors.blue, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                );
+                return funcCard(index);
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
-        onPressed: () async {
-          Todo newTodo = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const AddTodoPage(),
-              ));
+      floatingActionButton: funcFloatingActionButton(),
+      drawer: funcDrawer(),
+    );
+  }
 
-          setState(() {
-            _list.add(newTodo);
-          });
+  Drawer funcDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          UserAccountsDrawerHeader(
+            decoration: const BoxDecoration(color: Colors.blue),
+            currentAccountPicture: Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: const CircleAvatar(
+                backgroundImage: AssetImage("images/profile.jpg"),
+              ),
+            ),
+            accountEmail: const Text("mriskiromadoni03@gmail.com"),
+            accountName: const Text("RISKI TAKA"),
+          ),
+          ListTile(
+            leading: const Icon(
+              Icons.calendar_month_outlined,
+              color: Colors.blue,
+            ),
+            title: const Text(
+              'Todo-List',
+              style: TextStyle(color: Colors.blue),
+            ),
+            onTap: () => Navigator.pop(context),
+          ),
+          ListTile(
+              leading: const Icon(Icons.view_list),
+              title: const Text('Categories'),
+              onTap: () async {
+                Navigator.pop(context);
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SamplePage(),
+                  ),
+                );
+              }),
+        ],
+      ),
+    );
+  }
+
+  Card funcCard(index) {
+    return Card(
+      color: Colors.white,
+      elevation: 8.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: ListTile(
+        onTap: () async {
+          log("from home page :");
+          log(_list[index].category.toString());
+          Todo updateItem = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetailTodoPage(
+                currentTodo: _list[index],
+              ),
+            ),
+          );
+
+          if (updateItem != null) {
+            getTodo();
+          }
         },
-        tooltip: 'TodoLIst',
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
+        onLongPress: () {
+          log(_list[index].id.toString());
+          removeTodoAlert(context, index);
+        },
+        title: Text(
+          _list[index].title.toString() ?? "No Title",
+          style:
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
+        subtitle: Text(
+          _list[index].description ?? "No Descriptioin",
+          style:
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+        trailing: Text(
+          _list[index].date ?? "No Date",
+          style:
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+  FloatingActionButton funcFloatingActionButton() {
+    return FloatingActionButton(
+      backgroundColor: Colors.blue,
+      onPressed: () async {
+        Todo newTodo = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AddTodoPage(),
+            ));
+        getTodo();
+      },
+      tooltip: 'TodoLIst',
+      child: const Icon(
+        Icons.add,
+        color: Colors.white,
       ),
     );
   }
@@ -155,15 +188,13 @@ class _HomePageState extends State<HomePage> {
       },
     );
     Widget continueButton = TextButton(
-      child: const Text("Hapus"),
-      onPressed: () {
-        // setState(() {
-        //   _list.removeAt(index);
-        // });
-        var result = repo.deleteData('todos', _list[index].id);
+      onPressed: () async {
+        log(_list[index].id.toString());
+        await repo.deleteData('todo', _list[index].id);
         getTodo();
         Navigator.of(context).pop();
       },
+      child: const Text("Hapus"),
     );
 
     // set up the AlertDialog
