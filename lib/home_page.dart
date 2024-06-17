@@ -141,6 +141,7 @@ class _HomePageState extends State<HomePage> {
           log(_list[index].id.toString());
           removeTodoAlert(context, index);
         },
+<<<<<<< HEAD
         leading: Container(
           width: MediaQuery.of(context).size.width / 10,
           child: Text(
@@ -154,6 +155,13 @@ class _HomePageState extends State<HomePage> {
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
+=======
+        title: Text(
+          _list[index].title.toString() ?? "No Title",
+          style:
+              const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
+        ),
+>>>>>>> 210177cd307436354bb2535b73b6e1b6731445d7
         subtitle: Text(
           _list[index].description ?? "No Descriptioin",
           style:
