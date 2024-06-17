@@ -9,7 +9,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseConnection {
   setDatabase() async {
     var directory = await getApplicationDocumentsDirectory();
-    var path = join(directory.path, 'db_todolist_sqflite');
+    var path = join(directory.path, 'db_todolist_v5');
     var database =
         await openDatabase(path, version: 1, onCreate: _onCreatingDatabase);
 
@@ -17,8 +17,10 @@ class DatabaseConnection {
   }
 
   FutureOr<void> _onCreatingDatabase(Database db, int version) async {
-    await db.execute("DROP TABLE IF EXIST todos");
     await db.execute(
-        '''CREATE TABLE todosting (id INTEGER PRIMARY KEY, title TEXT, description TEXT, category TEXT, todo_date TEXT, is_finished INTEGER)''');
+        '''CREATE TABLE categories (id INTEGER PRIMARY KEY, category TEXT) ''');
+
+    await db.execute(
+        '''CREATE TABLE todo (id INTEGER PRIMARY KEY, title TEXT, desciption TEXT, category TEXT, todo_date TEXT, is_finished INTEGER)''');
   }
 }

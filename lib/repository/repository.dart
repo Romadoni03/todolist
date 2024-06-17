@@ -45,10 +45,14 @@ class Repository {
     return result;
   }
 
-  deleteData(table, id) async {
+  deleteData(table, itemid) async {
     var connection = await dbTodo;
+    var readData =
+        await connection.query(table, where: 'id = ?', whereArgs: [itemid]);
+    log(readData.toString());
     var result =
-        await connection.rawDelete("DELETE FROM $table WHERE id = $id");
+        await connection.rawDelete('DELETE FROM $table WHERE id = $itemid');
+    log("deleting");
     return result;
   }
 }

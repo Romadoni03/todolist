@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:todo_list/model/todolist_model.dart';
 
+import 'package:todo_list/repository/repository.dart';
+
 // ignore: must_be_immutable
 class DetailTodoPage extends StatefulWidget {
   Todo currentTodo;
@@ -99,81 +101,102 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
                 ),
               ),
             ),
-            ButtonTheme(
-              alignedDropdown: true,
-              child: DropdownButtonFormField(
-                decoration: const InputDecoration(
-                    label: Text("is Finished"),
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 170, 168, 162))),
-                value: finishedValue,
-                items: finishedOption
-                    .map((e) => DropdownMenuItem(
-                          value: e,
-                          child: Text(e),
-                        ))
-                    .toList(),
-                hint: const Text('Category'),
-                onChanged: isDisabled
-                    ? (value) {
-                        setState(() {
-                          finishedValue = value.toString();
-                        });
-                      }
-                    : null,
-              ),
-            ),
+            funcButtonTheme(),
             const SizedBox(
               height: 20,
             ),
-            ElevatedButton(
-              onPressed: updateButtonState
-                  ? () {
-                      setState(() {
-                        isDisabled = true;
-                        updateButtonState = false;
-                        returnButtonState = true;
-                      });
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                minimumSize: const Size(
-                  double.infinity,
-                  45,
-                ),
-              ),
-              child: const Text(
-                "Update",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: returnButtonState
-                  ? () {
-                      Todo updateTodo = Todo(
-                          title: _title.text.toString(),
-                          description: _description.text.toString(),
-                          date: _date.text.toString(),
-                          isFinished: finishedOption.indexOf(finishedValue));
-
-                      Navigator.pop(context, updateTodo);
-                    }
-                  : null,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(255, 202, 208, 212),
-                minimumSize: const Size(
-                  double.infinity,
-                  45,
-                ),
-              ),
-              child: const Text(
-                "Update and Return",
-                style: TextStyle(color: Colors.black),
-              ),
-            )
+            funcElevatedButtonUpdate(),
+            funcElevatedButtonUpdateReturn()
           ],
         ),
+      ),
+    );
+  }
+
+  ButtonTheme funcButtonTheme() {
+    return ButtonTheme(
+      alignedDropdown: true,
+      child: DropdownButtonFormField(
+        decoration: const InputDecoration(
+            label: Text("is Finished"),
+            labelStyle: TextStyle(color: Color.fromARGB(255, 170, 168, 162))),
+        value: finishedValue,
+        items: finishedOption
+            .map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e),
+                ))
+            .toList(),
+        hint: const Text('Category'),
+        onChanged: isDisabled
+            ? (value) {
+                setState(() {
+                  finishedValue = value.toString();
+                });
+              }
+            : null,
+      ),
+    );
+  }
+
+  ElevatedButton funcElevatedButtonUpdate() {
+    return ElevatedButton(
+      onPressed: updateButtonState
+          ? () {
+              setState(() {
+                isDisabled = true;
+                updateButtonState = false;
+                returnButtonState = true;
+              });
+            }
+          : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.blue,
+        minimumSize: const Size(
+          double.infinity,
+          45,
+        ),
+      ),
+      child: const Text(
+        "Update",
+        style: TextStyle(color: Colors.white),
+      ),
+    );
+  }
+
+  ElevatedButton funcElevatedButtonUpdateReturn() {
+    return ElevatedButton(
+      onPressed: returnButtonState
+          ? () {
+              Todo updateTodo = Todo(
+                id: _currentItem.id,
+                title: _title.text.toString(),
+                category: _category.text.toString(),
+                description: _description.text.toString(),
+                date: _date.text.toString(),
+                isFinished: finishedOption.indexOf(finishedValue),
+              );
+              Repository repo = Repository();
+              repo.updateData('todo', Todo.todoMap(updateTodo));
+              log("todo : update");
+              log(updateTodo.id.toString());
+              log(updateTodo.title.toString());
+              log(updateTodo.description.toString());
+              log(updateTodo.category.toString());
+              log(updateTodo.date.toString());
+              Navigator.pop(context, updateTodo);
+            }
+          : null,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 202, 208, 212),
+        minimumSize: const Size(
+          double.infinity,
+          45,
+        ),
+      ),
+      child: const Text(
+        "Update and Return",
+        style: TextStyle(color: Colors.black),
       ),
     );
   }

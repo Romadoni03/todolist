@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-// ignore: unused_import
-import 'package:todo_list/detail_todo_page.dart';
 import 'package:todo_list/home_page.dart';
-// import 'package:todo_list/home_page.dart';
-// import 'package:todo_list/home_page.dart';
 
 void main() {
   runApp(const MyApp());
