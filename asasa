@@ -1,0 +1,36 @@
+[33mcommit 927769365cbb39818ddedf37b16e604b192c005e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Merge: db31105 210177c
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Mon Jun 17 15:21:37 2024 +0700
+
+    Merge branch 'master' of github.com:Romadoni03/todolist
+
+[33mcommit db31105bb3081aed6ec1dea1fca30900284bc7b8[m
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Mon Jun 17 08:17:03 2024 +0700
+
+    new update CRUD todoList
+
+[33mcommit 210177cd307436354bb2535b73b6e1b6731445d7[m
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Mon Jun 17 08:17:03 2024 +0700
+
+    new update CRUD todoList
+
+[33mcommit 92813c992be6523384f53a253e97582038da94b4[m
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Thu Jun 13 08:44:02 2024 +0700
+
+    sqflite
+
+[33mcommit dcb7fa71303b6a9e448a454f9653b9d449a4a32a[m
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Thu Jun 6 09:04:06 2024 +0700
+
+    database
+
+[33mcommit 0c5b44e6d281eeefe123928caa355776a2fd5652[m
+Author: Mohammad Riski Romadoni <mriskiromadoni03@gmail.com>
+Date:   Thu May 16 14:57:39 2024 +0700
+
+    belajar
