@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list/model/categories_model.dart';
 import 'package:todo_list/model/todolist_model.dart';
 
 import 'package:todo_list/repository/repository.dart';
@@ -22,6 +23,8 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
   final _date = TextEditingController();
   final _isFinished = TextEditingController();
 
+  List _categories = [];
+
   late Todo _currentItem;
   bool isDisabled = false;
   bool updateButtonState = true;
@@ -29,13 +32,32 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
 
   List finishedOption = ["Belum selesai", "Selesai"];
   String finishedValue = "";
+  String? _selectedCategory;
 
   @override
   void initState() {
     super.initState();
     _currentItem = widget.currentTodo;
     // log("halaman update" + _currentItem.title.toString());
+    getCategoires();
     setData();
+  }
+
+  late Repository repo;
+  getCategoires() async {
+    _categories = [];
+    repo = Repository();
+    List<dynamic> resultCategories = await repo.readData('categories');
+    for (var category in resultCategories) {
+      _categories.add(Category.mapTodo(category));
+    }
+    setState(() {
+      _categories;
+      for (var x in _categories) {
+        log(x.id.toString());
+        log(x.category.toString());
+      }
+    });
   }
 
   void setData() {
@@ -45,6 +67,7 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
     _date.text = _currentItem.date.toString();
     _isFinished.text = _currentItem.isFinished.toString();
     finishedValue = finishedOption[int.parse(_isFinished.text)];
+    _selectedCategory = _category.text.toString();
   }
 
   @override
@@ -79,13 +102,22 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
                 hintText: "Description",
               ),
             ),
-            TextField(
-              enabled: isDisabled,
-              controller: _category,
-              decoration: const InputDecoration(
-                labelText: "Category",
-                hintText: "Category",
-              ),
+            DropdownButtonFormField<String>(
+              value: _selectedCategory,
+              items: _categories
+                  .map((item) => DropdownMenuItem<String>(
+                        value: item.category,
+                        child: Text(item.category.toString()),
+                      ))
+                  .toList(),
+              onChanged: isDisabled
+                  ? (value) {
+                      setState(() {
+                        log(value.toString());
+                        _selectedCategory = value.toString();
+                      });
+                    }
+                  : null,
             ),
             TextField(
               enabled: isDisabled,
@@ -171,7 +203,9 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
               Todo updateTodo = Todo(
                 id: _currentItem.id,
                 title: _title.text.toString(),
-                category: _category.text.toString(),
+                category: _selectedCategory.toString(),
+                categoryId: _categories.indexWhere(
+                    (category) => category.category == _selectedCategory),
                 description: _description.text.toString(),
                 date: _date.text.toString(),
                 isFinished: finishedOption.indexOf(finishedValue),
@@ -183,7 +217,9 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
               log(updateTodo.title.toString());
               log(updateTodo.description.toString());
               log(updateTodo.category.toString());
+              log(updateTodo.categoryId.toString());
               log(updateTodo.date.toString());
+              log(updateTodo.isFinished.toString());
               Navigator.pop(context, updateTodo);
             }
           : null,

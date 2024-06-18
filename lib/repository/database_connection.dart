@@ -9,7 +9,7 @@ import 'package:sqflite/sqflite.dart';
 class DatabaseConnection {
   setDatabase() async {
     var directory = await getApplicationDocumentsDirectory();
-    var path = join(directory.path, 'db_todolist_v5');
+    var path = join(directory.path, 'db_todolist_v6');
     var database =
         await openDatabase(path, version: 1, onCreate: _onCreatingDatabase);
 
@@ -21,6 +21,6 @@ class DatabaseConnection {
         '''CREATE TABLE categories (id INTEGER PRIMARY KEY, category TEXT) ''');
 
     await db.execute(
-        '''CREATE TABLE todo (id INTEGER PRIMARY KEY, title TEXT, desciption TEXT, category TEXT, todo_date TEXT, is_finished INTEGER)''');
+        '''CREATE TABLE todo (id INTEGER PRIMARY KEY, title TEXT, desciption TEXT,category_id INTEGER, category TEXT, todo_date TEXT, is_finished INTEGER)''');
   }
 }

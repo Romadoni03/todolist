@@ -17,6 +17,11 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   // ignore: unused_field
   List<Todo> _list = [];
+  List<Todo> _listIsFinished1 = [];
+  List<Todo> _listIsFinishedSelesai = [];
+
+  List finishedOption = ["Semua", "Belum selesai", "Selesai"];
+  String finishedValue = "Semua";
 
   @override
   void initState() {
@@ -24,6 +29,8 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     // generatedTodo();
     getTodo();
+    getTodoisFinished();
+    getTodoisFinishedSelesai();
   }
 
   late Repository repo;
@@ -36,6 +43,33 @@ class _HomePageState extends State<HomePage> {
     }
     setState(() {
       _list;
+      finishedValue;
+    });
+  }
+
+  getTodoisFinished() async {
+    _listIsFinished1 = [];
+    repo = Repository();
+    List<dynamic> resultTodo = await repo.readDataByIsFinished('todo', '0');
+    for (var todo in resultTodo) {
+      _listIsFinished1.add(Todo.mapTodo(todo));
+    }
+    setState(() {
+      log("message");
+      _listIsFinished1;
+    });
+  }
+
+  getTodoisFinishedSelesai() async {
+    _listIsFinishedSelesai = [];
+    repo = Repository();
+    List<dynamic> resultTodo = await repo.readDataByIsFinished('todo', '1');
+    for (var todo in resultTodo) {
+      _listIsFinishedSelesai.add(Todo.mapTodo(todo));
+    }
+    setState(() {
+      log("message");
+      _listIsFinishedSelesai;
     });
   }
 
@@ -54,11 +88,74 @@ class _HomePageState extends State<HomePage> {
           ? const Center(
               child: Text("Todo List Kosong"),
             )
-          : ListView.builder(
-              itemCount: _list.length,
-              itemBuilder: (context, index) {
-                return funcCard(index);
-              },
+          : Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Todo-List",
+                        style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 20),
+                      ),
+                      DropdownButton(
+                        hint: Text(finishedValue),
+                        items: finishedOption
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          log("log value $value");
+                          setState(() {
+                            finishedValue = value.toString();
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ),
+                Column(
+                  children: [
+                    if (finishedValue == "Semua")
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.85,
+                        child: ListView.builder(
+                          itemCount: _list.length,
+                          itemBuilder: (context, index) {
+                            return funcCard(index, _list);
+                          },
+                        ),
+                      )
+                    else if (finishedValue == "Belum selesai")
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.85,
+                        child: ListView.builder(
+                          itemCount: _listIsFinished1.length,
+                          itemBuilder: (context, index) {
+                            return funcCard(index, _listIsFinished1);
+                          },
+                        ),
+                      )
+                    else
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.85,
+                        child: ListView.builder(
+                          itemCount: _listIsFinishedSelesai.length,
+                          itemBuilder: (context, index) {
+                            return funcCard(index, _listIsFinishedSelesai);
+                          },
+                        ),
+                      )
+                  ],
+                )
+              ],
             ),
       floatingActionButton: funcFloatingActionButton(),
       drawer: funcDrawer(),
@@ -113,7 +210,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Card funcCard(index) {
+  Card funcCard(index, List<dynamic> listParams) {
     return Card(
       color: Colors.white,
       elevation: 8.0,
@@ -122,35 +219,32 @@ class _HomePageState extends State<HomePage> {
       ),
       child: ListTile(
         onTap: () async {
-          log("from home page :");
-          log(_list[index].category.toString());
-          Todo updateItem = await Navigator.push(
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => DetailTodoPage(
-                currentTodo: _list[index],
+                currentTodo: listParams[index],
               ),
             ),
           );
 
-          if (updateItem != null) {
-            getTodo();
-          }
+          getTodo();
+          getTodoisFinished();
+          getTodoisFinishedSelesai();
         },
         onLongPress: () {
-          log(_list[index].id.toString());
           removeTodoAlert(context, index);
         },
         leading: Container(
           width: MediaQuery.of(context).size.width / 10,
           child: Text(
-            _list[index].category.toString() ?? "No Title",
+            listParams[index].category.toString() ?? "No Title",
             style: const TextStyle(
                 color: Colors.blue, fontWeight: FontWeight.bold),
           ),
         ),
         title: Text(
-          _list[index].title.toString() ?? "No Title",
+          listParams[index].title.toString() ?? "No Title",
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
@@ -160,7 +254,7 @@ class _HomePageState extends State<HomePage> {
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
         trailing: Text(
-          _list[index].date ?? "No Date",
+          listParams[index].date ?? "No Date",
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
@@ -178,6 +272,8 @@ class _HomePageState extends State<HomePage> {
               builder: (context) => const AddTodoPage(),
             ));
         getTodo();
+        getTodoisFinished();
+        getTodoisFinishedSelesai();
       },
       tooltip: 'TodoLIst',
       child: const Icon(
@@ -200,6 +296,9 @@ class _HomePageState extends State<HomePage> {
         log(_list[index].id.toString());
         await repo.deleteData('todo', _list[index].id);
         getTodo();
+        getTodoisFinished();
+        getTodoisFinishedSelesai();
+        // ignore: use_build_context_synchronously
         Navigator.of(context).pop();
       },
       child: const Text("Hapus"),

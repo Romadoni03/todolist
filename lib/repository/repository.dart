@@ -38,6 +38,13 @@ class Repository {
     return result;
   }
 
+  readDataByIsFinished(table, isFinished) async {
+    var connection = await dbTodo;
+    var result = await connection
+        .query(table, where: 'is_finished=?', whereArgs: [isFinished]);
+    return result;
+  }
+
   updateData(table, data) async {
     var connection = await dbTodo;
     var result = await connection

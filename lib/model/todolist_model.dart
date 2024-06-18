@@ -3,6 +3,7 @@ class Todo {
   String? title;
   String? description;
   String? category;
+  int? categoryId;
   String? date;
   int? isFinished;
 
@@ -11,6 +12,7 @@ class Todo {
       this.title,
       this.description,
       this.category,
+      this.categoryId,
       this.date,
       this.isFinished});
 
@@ -20,6 +22,7 @@ class Todo {
     newTodo.title = map['title'];
     newTodo.description = map['desciption'];
     newTodo.category = map['category'];
+    newTodo.categoryId = map['category_id'];
     newTodo.date = map['todo_date'];
     newTodo.isFinished = map['is_finished'];
     return newTodo;
@@ -31,6 +34,7 @@ class Todo {
     mapping['title'] = item.title;
     mapping['desciption'] = item.description;
     mapping['category'] = item.category;
+    mapping['category_id'] = item.categoryId;
     mapping['todo_date'] = item.date;
     mapping['is_finished'] = item.isFinished;
     return mapping;

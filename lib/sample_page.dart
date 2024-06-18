@@ -102,16 +102,16 @@ class _SamplePageState extends State<SamplePage> {
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
-        trailing: IconButton(
-          onPressed: () {
-            removeCategoryAlert(context, index);
-            log("delete category");
-          },
-          icon: const Icon(
-            Icons.delete_forever_outlined,
-            color: Colors.red,
-          ),
-        ),
+        // trailing: IconButton(
+        //   onPressed: () {
+        //     removeCategoryAlert(context, index);
+        //     log("delete category");
+        //   },
+        //   icon: const Icon(
+        //     Icons.delete_forever_outlined,
+        //     color: Colors.red,
+        //   ),
+        // ),
       ),
     );
   }
@@ -218,8 +218,7 @@ class _SamplePageState extends State<SamplePage> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: const Text("Peringatan"),
-      content: const Text("Hapus category ?"),
+      content: const Text("Deletet this category ?"),
       actions: [
         cancelButton,
         continueButton,

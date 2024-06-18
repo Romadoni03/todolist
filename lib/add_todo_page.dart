@@ -1,8 +1,11 @@
+// ignore_for_file: unnecessary_import
+
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_list/model/categories_model.dart';
 import 'package:todo_list/model/todolist_model.dart';
 import 'package:todo_list/repository/repository.dart';
 
@@ -19,11 +22,37 @@ class _AddTodoPageState extends State<AddTodoPage> {
   final _category = TextEditingController();
   final _date = TextEditingController();
 
+  List _categories = [];
+  String? _selectedCategory;
+
+  @override
+  void initState() {
+    super.initState();
+    getCategoires();
+  }
+
+  late Repository repo;
+  getCategoires() async {
+    _categories = [];
+    repo = Repository();
+    List<dynamic> resultCategories = await repo.readData('categories');
+    for (var category in resultCategories) {
+      _categories.add(Category.mapTodo(category));
+    }
+    setState(() {
+      _categories;
+      for (var x in _categories) {
+        log(x.id.toString());
+        log(x.category.toString());
+      }
+    });
+  }
+
   _addTodoList() async {
     Todo newTodo = Todo(
       title: _title.text,
       description: _description.text,
-      category: _category.text,
+      category: _selectedCategory,
       date: _date.text,
       isFinished: 0,
     );
@@ -36,6 +65,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
       // ignore: use_build_context_synchronously
       Navigator.pop(context, newTodo);
       log("sukses");
+      log("category Id : ${newTodo.categoryId}");
     } else {
       // ignore: prefer_interpolation_to_compose_strings
       log("Data is not created. Result value : " + result);
@@ -72,13 +102,20 @@ class _AddTodoPageState extends State<AddTodoPage> {
                 hintText: "Description",
               ),
             ),
-            TextField(
-              controller: _category,
-              decoration: const InputDecoration(
-                labelText: "Category",
-                hintText: "Category",
-              ),
-            ),
+            DropdownButtonFormField<String>(
+                value: _selectedCategory,
+                items: _categories
+                    .map((item) => DropdownMenuItem<String>(
+                          value: item.category,
+                          child: Text(item.category.toString()),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() {
+                    log(value.toString());
+                    _selectedCategory = value.toString();
+                  });
+                }),
             TextField(
               controller: _date,
               decoration: InputDecoration(
@@ -88,7 +125,7 @@ class _AddTodoPageState extends State<AddTodoPage> {
                   onTap: () {
                     _selectTodoDate(context);
                   },
-                  child: Icon(Icons.calendar_today),
+                  child: const Icon(Icons.calendar_today),
                 ),
               ),
             ),
