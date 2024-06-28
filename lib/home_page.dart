@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: const Text(
-          "TodoList App",
+          "TodoList Page",
           style: TextStyle(color: Colors.white),
         ),
         centerTitle: true,
@@ -238,7 +238,7 @@ class _HomePageState extends State<HomePage> {
         leading: Container(
           width: MediaQuery.of(context).size.width / 10,
           child: Text(
-            listParams[index].category.toString() ?? "No Title",
+            listParams[index].category.toString() ?? "No Category",
             style: const TextStyle(
                 color: Colors.blue, fontWeight: FontWeight.bold),
           ),

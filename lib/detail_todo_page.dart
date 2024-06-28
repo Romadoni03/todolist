@@ -67,7 +67,7 @@ class _DetailTodoPageState extends State<DetailTodoPage> {
     _date.text = _currentItem.date.toString();
     _isFinished.text = _currentItem.isFinished.toString();
     finishedValue = finishedOption[int.parse(_isFinished.text)];
-    _selectedCategory = _category.text.toString();
+    _selectedCategory = _category.text;
   }
 
   @override

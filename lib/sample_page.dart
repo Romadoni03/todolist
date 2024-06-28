@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:todo_list/model/categories_model.dart';
+import 'package:todo_list/model/todolist_model.dart';
 import 'package:todo_list/repository/repository.dart';
 
 class SamplePage extends StatefulWidget {
@@ -12,7 +13,10 @@ class SamplePage extends StatefulWidget {
 
 class _SamplePageState extends State<SamplePage> {
   final _name = TextEditingController();
+  final _nameUpdate = TextEditingController();
   List<Category> _categories = [];
+  List<Todo> list = [];
+  int? result;
 
   _addCategory() async {
     Category newCategory = Category(category: _name.text);
@@ -31,12 +35,26 @@ class _SamplePageState extends State<SamplePage> {
     }
   }
 
+  getTodoByCategory(categoryText) async {
+    list = [];
+    repo = Repository();
+    List<dynamic> resultTodo =
+        await repo.readTodoByCategory('todo', categoryText);
+    for (var todo in resultTodo) {
+      list.add(Todo.mapTodo(todo));
+    }
+    setState(() {
+      result = list.length;
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     // generatedTodo();
     getCategoires();
+    getTodoByCategory;
   }
 
   late Repository repo;
@@ -97,21 +115,37 @@ class _SamplePageState extends State<SamplePage> {
         borderRadius: BorderRadius.circular(0),
       ),
       child: ListTile(
+        leading: IconButton(
+            onPressed: () {
+              _nameUpdate.text = _categories[index].category.toString();
+              updateCategory(context, index);
+            },
+            icon: const Icon(
+              Icons.edit,
+              color: Colors.black,
+            )),
         title: Text(
           _categories[index].category.toString() ?? "Nothing Category",
           style:
               const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
         ),
-        // trailing: IconButton(
-        //   onPressed: () {
-        //     removeCategoryAlert(context, index);
-        //     log("delete category");
-        //   },
-        //   icon: const Icon(
-        //     Icons.delete_forever_outlined,
-        //     color: Colors.red,
-        //   ),
-        // ),
+        trailing: IconButton(
+          onPressed: () async {
+            await getTodoByCategory(_categories[index].category);
+            log(result.toString());
+            if (result != 0) {
+              useCategoryAlert();
+              log("category masih digunakan di todolist");
+            } else {
+              removeCategoryAlert(context, index);
+              log("delete category");
+            }
+          },
+          icon: const Icon(
+            Icons.delete_forever_outlined,
+            color: Colors.red,
+          ),
+        ),
       ),
     );
   }
@@ -230,6 +264,80 @@ class _SamplePageState extends State<SamplePage> {
       context: context,
       builder: (BuildContext context) {
         return alert;
+      },
+    );
+  }
+
+  useCategoryAlert() {
+    Widget continueButton = TextButton(
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      child: const Text("Oke"),
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      content: const Text("Category ini sedang digunakan di todolist"),
+      actions: [
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  updateCategory(BuildContext context, index) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Update Category"),
+          content: TextField(
+            controller: _nameUpdate,
+            decoration: const InputDecoration(
+              labelText: "Name",
+              hintText: "Category",
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                log("Batal");
+                Navigator.pop(context);
+              },
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                log(_categories[index].id.toString());
+                log(_nameUpdate.text.toString());
+                Category updateCategory = Category(
+                  id: _categories[index].id,
+                  category: _nameUpdate.text.toString(),
+                );
+
+                Repository repo = Repository();
+                repo.updateCategoryTodo(
+                    'todo',
+                    _categories[index].category.toString(),
+                    _nameUpdate.text.toString());
+                repo.updateData('categories', Category.todoMap(updateCategory));
+                log(_categories[index].category.toString());
+                log(_nameUpdate.text);
+                Navigator.pop(context);
+                getCategoires();
+              },
+              child: const Text("Update"),
+            )
+          ],
+        );
       },
     );
   }

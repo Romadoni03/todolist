@@ -62,4 +62,20 @@ class Repository {
     log("deleting");
     return result;
   }
+
+  readTodoByCategory(table, categorytext) async {
+    var connection = await dbTodo;
+    var result = await connection.query(table,
+        where: 'category=?', whereArgs: [categorytext], limit: 1);
+    return result;
+  }
+
+  updateCategoryTodo(table, category, categorytext) async {
+    var connection = await dbTodo;
+    var result = await connection.rawUpdate(
+        "UPDATE todo SET category = 'mlbb' WHERE category = 'sport'");
+    log("cateo" + category);
+    log("cattt" + categorytext);
+    return result;
+  }
 }

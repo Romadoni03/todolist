@@ -19,7 +19,6 @@ class AddTodoPage extends StatefulWidget {
 class _AddTodoPageState extends State<AddTodoPage> {
   final _title = TextEditingController();
   final _description = TextEditingController();
-  final _category = TextEditingController();
   final _date = TextEditingController();
 
   List _categories = [];
